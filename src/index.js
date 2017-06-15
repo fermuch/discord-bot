@@ -3,6 +3,7 @@ var Discord = require("discord.js");
 var BotMaker = function(conf) {
 	this.email     = conf.email;
 	this.password  = conf.password;
+	this.token     = conf.token;
 
 	this.client = new Discord.Client();
 
@@ -17,10 +18,17 @@ var BotMaker = function(conf) {
 
 
 BotMaker.prototype.connect = function(cb) {
-	this.client.login(this.email, this.password, function(err) {
-		if (err)
-			throw new Error(err.message + ' : ' + err.response.text);
-	});
+	if (this.token) {
+		this.client.login(this.token, function(err) {
+			if (err)
+				throw new Error(err.message + ' : ' + err.response.text);
+		});
+	} else {
+		this.client.login(this.email, this.password, function(err) {
+			if (err)
+				throw new Error(err.message + ' : ' + err.response.text);
+		});
+	}
 
 	this.client.on('ready', cb);
 

@@ -76,12 +76,9 @@ BotMaker.prototype.sendAndLog = function(method, target, message, callback) {
 	var logger = this.getService('logger');
 	var that = this;
 
-	var args = [target, message];
+	var args = [message];
 
-	if (method ==  'reply')
-		args.push({});
-
-	args.push(function(err, message) {
+	function handler(err, message) => {
 		if (err && logger)
 			logger.log('Error while sending message: ' + err);
 		else if (logger) {
@@ -94,16 +91,18 @@ BotMaker.prototype.sendAndLog = function(method, target, message, callback) {
 			callback(err, message);
 	});
 
-	this.client[method].apply(this.client, args);
+	target[method].apply(target, args).then(handler);
 }
 
 BotMaker.prototype.sendMessage = function(target, message, callback) {
-	this.sendAndLog('sendMessage', target, message, callback);
+	this.sendAndLog('send', target, message, callback);
 };
+BotMaker.prototype.send = BotMaker.prototype.sendMessage;
 
 BotMaker.prototype.updateMessage = function(target, message, callback) {
-	this.sendAndLog('updateMessage', target, message, callback);
+	this.sendAndLog('edit', target, message, callback);
 };
+BotMaker.prototype.edit = BotMaker.prototype.updateMessage;
 
 BotMaker.prototype.reply = function(target, message, callback) {
 	this.sendAndLog('reply', target, message, callback);

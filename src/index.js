@@ -78,7 +78,7 @@ BotMaker.prototype.sendAndLog = function(method, target, message, callback) {
 
 	var args = [message];
 
-	function handler(err, message) => {
+	target[method].apply(target, args).then(function handler(err, message) {
 		if (err && logger)
 			logger.log('Error while sending message: ' + err);
 		else if (logger) {
@@ -90,8 +90,6 @@ BotMaker.prototype.sendAndLog = function(method, target, message, callback) {
 		if (callback)
 			callback(err, message);
 	});
-
-	target[method].apply(target, args).then(handler);
 }
 
 BotMaker.prototype.sendMessage = function(target, message, callback) {
